@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct TreeNode {
+    char name[100];
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Create new tree node
+struct TreeNode* createTreeNode(char* name) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    strcpy(newNode->name, name);
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Insert name into BST
+struct TreeNode* insert(struct TreeNode* root, char* name) {
+    if (root == NULL) {
+        return createTreeNode(name);
+    }
+    // Compare names alphabetically
+    if (strcmp(name, root->name) < 0) {
+        root->left = insert(root->left, name);
+    } else if (strcmp(name, root->name) > 0) {
+        root->right = insert(root->right, name);
+    } else {
+        printf("Name already exists in the directory!\n");
+    }
+    return root;
+}
+
+// Search for a name in BST
+void search(struct TreeNode* root, char* name) {
+    if (root == NULL) {
+        printf("Name '%s' not found.\n", name);
+        return;
+    }
+    if (strcmp(name, root->name) == 0) {
+        printf("Name '%s' found in directory!\n", name);
+        return;
+    }
+    if (strcmp(name, root->name) < 0) {
+        search(root->left, name);
+    } else {
+        search(root->right, name);
+    }
+}
+
+// Inorder Traversal (Left, Node, Right - Alphabetical)
+void inorder(struct TreeNode* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%s\n", root->name);
+        inorder(root->right);
+    }
+}
+
+// Preorder Traversal (Node, Left, Right)
+void preorder(struct TreeNode* root) {
+    if (root != NULL) {
+        printf("%s\n", root->name);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Postorder Traversal (Left, Right, Node)
+void postorder(struct TreeNode* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%s\n", root->name);
+    }
+}
+
+// Main menu
+int main() {
+    struct TreeNode* root = NULL;
+    int choice;
+    char name[100];
+
+    while (1) {
+        printf("\n--- Directory System (BST) ---\n");
+        printf("1. Insert Name\n2. Search Name\n3. Inorder Traversal\n");
+        printf("4. Preorder Traversal\n5. Postorder Traversal\n6. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        getchar(); // consume newline
+
+        switch (choice) {
+            case 1:
+                printf("Enter name to insert: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0; // Remove newline character
+                root = insert(root, name);
+                printf("Inserted successfully!\n");
+                break;
+            case 2:
+                printf("Enter name to search: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+                search(root, name);
+                break;
+            case 3:
+                printf("Inorder Traversal (Sorted Alphabetically):\n");
+                if (root == NULL) printf("Directory is empty!\n");
+                else inorder(root);
+                break;
+            case 4:
+                printf("Preorder Traversal:\n");
+                if (root == NULL) printf("Directory is empty!\n");
+                else preorder(root);
+                break;
+            case 5:
+                printf("Postorder Traversal:\n");
+                if (root == NULL) printf("Directory is empty!\n");
+                else postorder(root);
+                break;
+            case 6: return 0;
+            default: printf("Invalid choice!\n");
+        }
+    }
+}
